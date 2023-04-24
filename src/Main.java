@@ -1,112 +1,77 @@
-import java.util.Scanner;
+//Посмотрите на код, и подумайте сколько разных типов исключений вы тут сможете получить?
+//1)ArrayIndexOutOfBoundsException при колличестве строк меньше 5
+//2)NumberFormatException если массив содержит не только цифры
+
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        Tree node = new Tree();
-        Scanner scan = new Scanner(System.in);
+        //Реализуйте 3 метода, чтобы в каждом из них получить разные исключения.
+        first();
+        second();
+        third();
 
-        char ch;
-        do {
-            System.out.println("Введите число");
-            int num = scan.nextInt();
-            node.root = node.insert(node.root, num);
-            node.inorder(node.root);
-            System.out.println("\nПродолжить?(Y, N)");
-            ch = scan.next().charAt(0);
-        } while (ch == 'Y' || ch == 'y');
-    }
-}
+        int arr[] = {10, 20, 30};
+        int arr2[] = {3, 3, 0};
+//        System.out.println(Arrays.toString(subtraction(arr, arr2)));
 
-
-class Tree {
-
-    Node root = null;
-
-    Node rotateLeft(Node myNode) {
-        System.out.print("left\n");
-        Node child = myNode.right;
-        Node childLeft = child.left;
-
-        child.left = myNode;
-        myNode.right = childLeft;
-
-        return child;
+        System.out.println(Arrays.toString(divide(arr,arr2)));
     }
 
-    Node rotateRight(Node myNode) {
-        System.out.print("right\n");
-        Node child = myNode.left;
-        Node childRight = child.right;
-
-        child.right = myNode;
-        myNode.left = childRight;
-
-        return child;
+    public static void first() {
+        int i = 10 % 0;
     }
 
-    boolean isRed(Node myNode) {
-        if (myNode == null) {
-            return false;
+    public static void second() {
+        int array[] = {1, 2, 3};
+        System.out.println(array[4]);
+    }
+
+    public static void third() {
+        File f = new File("Z://java/file.txt");
+        try {
+            FileReader fr = new FileReader(f);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        return (myNode.color == true);
     }
 
-    void swapColors(Node node1, Node node2) {
-        boolean temp = node1.color;
-        node1.color = node2.color;
-        node2.color = temp;
-    }
-
-    Node insert(Node myNode, int data) {
-        if (myNode == null) {
-            return new Node(data);
-        }
-        if (data < myNode.value) {
-            myNode.left = insert(myNode.left, data);
-        } else if (data > myNode.value) {
-            myNode.right = insert(myNode.right, data);
+    //Реализуйте метод, принимающий в качестве аргументов два целочисленных массива, и возвращающий новый массив,
+    //каждый элемент которого равен разности элементов двух входящих массивов в той же ячейке.
+    //Если длины массивов не равны, необходимо как-то оповестить пользователя.
+    public static int[] subtraction(int first[], int second[]) {
+        if (first.length != second.length) {
+            throw new RuntimeException("Длины массивов не равны!");
         } else {
-            return myNode;
-        }
-        if (isRed(myNode.right) && !isRed(myNode.left)) {
-            myNode = rotateLeft(myNode);
-            swapColors(myNode, myNode.left);
-        }
-        if (isRed(myNode.left) && isRed(myNode.left.left)) {
-            myNode = rotateRight(myNode);
-            swapColors(myNode, myNode.right);
-        }
-        if (isRed(myNode.left) && isRed(myNode.right)) {
-            myNode.color = !myNode.color;
-            myNode.left.color = false;
-            myNode.right.color = false;
-        }
-        return myNode;
-    }
-
-    void inorder(Node node) {
-        if (node != null) {
-            inorder(node.left);
-            char c = '●';
-            if (node.color == false)
-                c = '◯';
-            System.out.print(node.value + "" + c + " ");
-            inorder(node.right);
+            int result[] = new int[first.length];
+            for (int i = 0; i < first.length; i++) {
+                result[i] = first[i] - second[i];
+            }
+            return result;
         }
     }
 
-}
 
-class Node {
-    Node left, right;
-    int value;
-    boolean color; // красный
-
-    Node(int value) {
-        this.value = value;
-        left = null;
-        right = null;
-        color = true;
+    //* Реализуйте метод, принимающий в качестве аргументов два целочисленных массива,и возвращающий новый массив,
+    //каждый элемент которого равен частному элементов двух входящих массивов ddddddddе.
+    //Если длины массивов не равны, необходимо как-то оповестить пользователя.
+    //Важно: При выполнении метода единственное исключение, которое пользователь может увидеть - RuntimeException, т.е. ваше.
+    public static int[]divide(int first[],int second[]){
+        if (first.length != second.length) {
+            throw new RuntimeException("Длины массивов не равны!");
+        } else {
+            int result[] = new int[first.length];
+            for (int i = 0; i < first.length; i++) {
+                if(first[i] == 0 || second[i]==0){
+                    throw new RuntimeException("На ноль делить нельзя!");
+                }
+                result[i] = first[i] / second[i];
+            }
+            return result;
+        }
     }
 }
-
