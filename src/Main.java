@@ -1,77 +1,89 @@
-//Посмотрите на код, и подумайте сколько разных типов исключений вы тут сможете получить?
-//1)ArrayIndexOutOfBoundsException при колличестве строк меньше 5
-//2)NumberFormatException если массив содержит не только цифры
-
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Arrays;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        //Реализуйте 3 метода, чтобы в каждом из них получить разные исключения.
-        first();
+        System.out.println(first());
         second();
         third();
-
-        int arr[] = {10, 20, 30};
-        int arr2[] = {3, 3, 0};
-//        System.out.println(Arrays.toString(subtraction(arr, arr2)));
-
-        System.out.println(Arrays.toString(divide(arr,arr2)));
+        fourth();
     }
 
-    public static void first() {
-        int i = 10 % 0;
+    //Задание 1:
+    //Реализуйте метод, который запрашивает у пользователя ввод дробного числа (типа float)
+    // и возвращает введенное значение.
+    // Ввод текста вместо числа не должно приводить к падению приложения,
+    // вместо этого, необходимо повторно запросить у пользователя ввод данных.
+    public static float first() {
+
+        boolean check = true;
+        while (check) {
+            System.out.println("Введите дробное число: ");
+            Scanner scan = new Scanner(System.in);
+            try {
+                float count = scan.nextFloat();
+                return count;
+
+            } catch (RuntimeException e) {
+                System.out.println("Ошибка ввода. Попробуйте еще раз.");
+            }
+        }
+        return 0;
     }
+
+
+    //Задание 2:
+    //Исправление ошибок в коде.
 
     public static void second() {
-        int array[] = {1, 2, 3};
-        System.out.println(array[4]);
-    }
-
-    public static void third() {
-        File f = new File("Z://java/file.txt");
+        double[] intArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
         try {
-            FileReader fr = new FileReader(f);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    //Реализуйте метод, принимающий в качестве аргументов два целочисленных массива, и возвращающий новый массив,
-    //каждый элемент которого равен разности элементов двух входящих массивов в той же ячейке.
-    //Если длины массивов не равны, необходимо как-то оповестить пользователя.
-    public static int[] subtraction(int first[], int second[]) {
-        if (first.length != second.length) {
-            throw new RuntimeException("Длины массивов не равны!");
-        } else {
-            int result[] = new int[first.length];
-            for (int i = 0; i < first.length; i++) {
-                result[i] = first[i] - second[i];
-            }
-            return result;
+            int d = 0;
+            double catchedRes1 = intArray[8] / d;
+            System.out.println("catchedRes1 = " + catchedRes1);
+        } catch (ArithmeticException e) {
+            System.out.println("Catching exception: " + e);
         }
     }
 
 
-    //* Реализуйте метод, принимающий в качестве аргументов два целочисленных массива,и возвращающий новый массив,
-    //каждый элемент которого равен частному элементов двух входящих массивов ddddddddе.
-    //Если длины массивов не равны, необходимо как-то оповестить пользователя.
-    //Важно: При выполнении метода единственное исключение, которое пользователь может увидеть - RuntimeException, т.е. ваше.
-    public static int[]divide(int first[],int second[]){
-        if (first.length != second.length) {
-            throw new RuntimeException("Длины массивов не равны!");
+    //Задание 3:
+    //Исправление ошибок в коде.
+    public static void third() {
+
+        try {
+            int a = 90;
+            int b = 3;
+            System.out.println(a / b);
+            printSum(23, 234);
+            int[] abc = {1, 2};
+            abc[3] = 9;
+        } catch (NullPointerException ex) {
+            System.out.println("Указатель не может указывать на null!");
+        } catch (IndexOutOfBoundsException ex) {
+            System.out.println("Массив выходит за пределы своего размера!");
+        } catch (Throwable ex) {
+            System.out.println("Что-то пошло не так...");
+        }
+
+    }
+
+    public static void printSum(Integer a, Integer b) {
+        System.out.println(a + b);
+    }
+
+    //Задание 4:
+    //Разработайте программу, которая выбросит Exception, когда пользователь вводит пустую строку.
+    //Пользователю должно показаться сообщение, что пустые строки вводить нельзя.
+    public static void fourth() throws RuntimeException {
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Введите что нибудь:");
+        String str = scan.nextLine();
+        if (str.length() < 1) {
+            throw new RuntimeException("Пустые строки вводить нельзя");
         } else {
-            int result[] = new int[first.length];
-            for (int i = 0; i < first.length; i++) {
-                if(first[i] == 0 || second[i]==0){
-                    throw new RuntimeException("На ноль делить нельзя!");
-                }
-                result[i] = first[i] / second[i];
-            }
-            return result;
+            if (str.equals(" "))
+                System.out.println("Вы ввели пробел, интересно...");
+            else System.out.println(str);
         }
     }
 }
