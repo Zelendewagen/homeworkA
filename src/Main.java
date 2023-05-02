@@ -1,89 +1,133 @@
-import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
+// Если форматы данных не совпадают, нужно бросить исключение, соответствующее типу проблемы. Можно использовать встроенные типы java и создать свои.
+// Исключение должно быть корректно обработано, пользователю выведено сообщение с информацией, что именно неверно.
+//
+//Если всё введено и обработано верно, должен создаться файл с названием, равным фамилии, в него в одну строку должны записаться полученные данные, вида
+//
+//<Фамилия><Имя><Отчество><датарождения> <номертелефона><пол>
+//
+//Однофамильцы должны записаться в один и тот же файл, в отдельные строки.
+//
+//Не забудьте закрыть соединение с файлом.
+//
+//При возникновении проблемы с чтением-записью в файл, исключение должно быть корректно обработано, пользователь должен увидеть стектрейс ошибки.
 public class Main {
-    public static void main(String[] args) {
-        System.out.println(first());
-        second();
-        third();
-        fourth();
+    public static void main(String[] args) throws IOException {
+        String[] data = enter();
+        parsing(data);
+        saveFilee(data);
+
     }
 
-//      Задание 1:
-//      Реализуйте метод, который запрашивает у пользователя ввод дробного числа (типа float)
-//      и возвращает введенное значение.
-//      Ввод текста вместо числа не должно приводить к падению приложения,
-//      вместо этого, необходимо повторно запросить у пользователя ввод данных.
-    public static float first() {
+    public static String[] enter() throws IOException {
+        System.out.println("Введите в произвольном порядке, через пробел, данные: " +
+                "ФИО, пол(М или Ж), дата рождения и номер телефона\n" +
+                "Пример: Иванов Иван Иванович М 01.01.1001 71234567890");
+        Scanner scan = new Scanner(System.in);
+        String info = scan.nextLine();
+        String[] data = info.split(" ");
+        if (data.length > 6) {
+            throw new IOException("Введено больше данных, чем нужно");
+        }
+        if (data.length < 6) {
+            throw new IOException("Введено меньше данных чем нужно");
+        }
+        return data;
+    }
 
-        boolean check = true;
-        while (check) {
-            System.out.println("Введите дробное число: ");
-            Scanner scan = new Scanner(System.in);
-            try {
-                float count = scan.nextFloat();
-                return count;
 
-            } catch (RuntimeException e) {
-                System.out.println("Ошибка ввода. Попробуйте еще раз.");
+    public static void parsing(String[] data) throws IOException {
+        String birthday = null, gender = null;
+        Long number = null;
+
+        List<String> allNames = new ArrayList<>();
+        for (String i : data) {
+            if (i.contains(".")) {
+                birthday = i;
+            } else if (i.equals("М") || i.equals("Ж")) {
+                gender = i;
+            } else if (i.matches("\\d+")) {
+                number = Long.parseLong(i);
+            } else {
+                allNames.add(i);
             }
         }
-        return 0;
-    }
 
+//      Проверка на корректность ввода.
+        if (birthday == null) {
+            throw new IOException("Не верно введена дата рождения.\n" +
+                    "Вводите следующим форматом: dd.mm.yyyy");
+        }
+        if (number == null) {
+            throw new IOException("Не верно введен номер телефона.\n" +
+                    "Вводите только цифры");
+        }
+        if (gender == null) {
+            throw new IOException("Не верно введен пол.\n" +
+                    "Вводите одной буквой 'М' или 'Ж'");
+        }
 
-//      Задание 2:
-//      Исправление ошибок в коде.
+//      Сортировка пузырьком ФИО по длине (фамилия должная быть короче отчества и длиньше имени);
+        String fname = allNames.get(0);
+        String lname = allNames.get(1);
+        String fathername = allNames.get(2);
+        String tempName;
+        if (fname.length() > fathername.length()) {
+            tempName = fathername;
+            fathername = fname;
+            fname = tempName;
+        }
+        if (fname.length() > lname.length()) {
+            tempName = lname;
+            lname = fname;
+            fname = tempName;
+        }
+        if (lname.length() > fathername.length()) {
+            tempName = fathername;
+            fathername = lname;
+            lname = tempName;
+        }
 
-    public static void second() {
-        double[] intArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-        try {
-            int d = 0;
-            double catchedRes1 = intArray[8] / d;
-            System.out.println("catchedRes1 = " + catchedRes1);
-        } catch (ArithmeticException e) {
-            System.out.println("Catching exception: " + e);
+//      Заполнение отсортированных данных
+        for (int i = 0; i < data.length; i++) {
+            switch (i) {
+                case 0:
+                    data[i] = lname;
+                    break;
+                case 1:
+                    data[i] = fname;
+                    break;
+                case 2:
+                    data[i] = fathername;
+                    break;
+                case 3:
+                    data[i] = birthday;
+                    break;
+                case 4:
+                    data[i] = number.toString();
+                    break;
+                case 5:
+                    data[i] = gender;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-
-//      Задание 3:
-//      Исправление ошибок в коде.
-    public static void third() {
-
-        try {
-            int a = 90;
-            int b = 3;
-            System.out.println(a / b);
-            printSum(23, 234);
-            int[] abc = {1, 2};
-            abc[3] = 9;
-        } catch (NullPointerException ex) {
-            System.out.println("Указатель не может указывать на null!");
-        } catch (IndexOutOfBoundsException ex) {
-            System.out.println("Массив выходит за пределы своего размера!");
-        } catch (Throwable ex) {
-            System.out.println("Что-то пошло не так...");
+    public static void saveFilee(String[] data) {
+        String filename = data[0];
+        try (FileWriter writer = new FileWriter(filename, true)) {
+            for (String i : data) {
+                writer.append("<" + i + ">");
+            }
+            writer.append("\n");
+        } catch (RuntimeException | IOException e) {
+            System.out.println(e);
         }
 
-    }
-
-    public static void printSum(Integer a, Integer b) {
-        System.out.println(a + b);
-    }
-
-//      Задание 4:
-//      Разработайте программу, которая выбросит Exception, когда пользователь вводит пустую строку.
-//      Пользователю должно показаться сообщение, что пустые строки вводить нельзя.
-    public static void fourth() throws RuntimeException {
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Введите что нибудь:");
-        String str = scan.nextLine();
-        if (str.length() < 1) {
-            throw new RuntimeException("Пустые строки вводить нельзя");
-        } else {
-            if (str.equals(" "))
-                System.out.println("Вы ввели пробел, интересно...");
-            else System.out.println(str);
-        }
     }
 }
